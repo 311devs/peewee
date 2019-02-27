@@ -5185,7 +5185,7 @@ class Metadata(object):
                  only_save_dirty=False, depends_on=None, options=None,
                  db_table=None, table_function=None, table_settings=None,
                  without_rowid=False, temporary=False, legacy_table_names=True,
-                 **kwargs):
+                 triggers=None, **kwargs):
         if db_table is not None:
             __deprecated__('"db_table" has been deprecated in favor of '
                            '"table_name" for Models.')
@@ -5217,6 +5217,7 @@ class Metadata(object):
         self.table_name = table_name
         self._table = None
 
+        self.triggers = list(triggers) if triggers else []
         self.indexes = list(indexes) if indexes else []
         self.constraints = constraints
         self._schema = schema
