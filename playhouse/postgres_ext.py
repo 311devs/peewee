@@ -68,8 +68,10 @@ class _JsonLookupBase(_LookupNode):
     def as_json(self, as_json=True):
         self._as_json = as_json
 
-    def contains(self, other):
+    def contains(self, other, is_json=False):
         clone = self.as_json(True)
+        if is_json:
+            return Expression(clone, JSONB_CONTAINS, other)
         if isinstance(other, (list, dict)):
             return Expression(clone, JSONB_CONTAINS, Json(other))
         if isinstance(other, int):
@@ -307,10 +309,10 @@ class BinaryJSONField(IndexedFieldMixin, JSONField):
     default_index_type = 'GIN'
     __hash__ = Field.__hash__
 
-    def contains(self, other):
+    def contains(self, other, is_json=False):
         if isinstance(other, (list, dict)):
             return Expression(self, JSONB_CONTAINS, Json(other))
-        if isinstance(other, (BinaryJSONField, JSONField)):
+        if is_json or isinstance(other, (BinaryJSONField, JSONField)):
             return Expression(self, JSONB_CONTAINS, other)
         return Expression(cast_jsonb(self), JSONB_EXISTS, other)
 
